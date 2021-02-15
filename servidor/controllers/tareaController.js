@@ -1,8 +1,8 @@
 const Tarea = require("../models/Tarea");
 const Proyecto = require("../models/Proyecto");
 const { validationResult } = require("express-validator");
-//Crea un atarea
 
+//Crea un atarea
 exports.crearTarea = async (req, res) => {
   //revisar si hay errores
   const errores = validationResult(req);
@@ -30,6 +30,7 @@ exports.crearTarea = async (req, res) => {
     res.status(500).send("Hubo un error en el servidor");
   }
 };
+
 //Obtiene las tareas por proyectos
 exports.obtenerTareas = async (req, res) => {
   //Extraemos el proyecto
@@ -52,6 +53,7 @@ exports.obtenerTareas = async (req, res) => {
     res.status(500).send("Hubo un error en el servidor", error);
   }
 };
+
 //Actualizar tarea
 exports.actualizarTarea = async (req, res) => {
   try {
@@ -83,3 +85,30 @@ exports.actualizarTarea = async (req, res) => {
     res.status(500).send("Hubo un error en el servidor");
   }
 };
+
+//eliminar una tarea
+exports.eliminarTarea = async( req, res)=>{
+  try {
+    //Extraer el proyecto
+    const { proyecto } = req.body;
+
+    //Revisar si existe dicha tarea
+    let tarea = await Tarea.findById(req.params.id);
+    if (!tarea) {
+      return res.status(404).json({ msg: "No existe dicho Proyecto" });
+    }
+    //extraer proyecto
+    const existeProyecto = await Proyecto.findById(proyecto);
+
+    //Revisar si el proyecto actual pertenece a ese usuario
+    if (existeProyecto.creador.toString() !== req.usuario.id) {
+      return res.status(401).json({ msg: "No autorizado" });
+    }
+    //eliminar 
+    await Tarea.findOneAndRemove({_id: req.params.id});
+    res.json({msg: 'Tarea eliminada correctamente'})
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Hubo un error en el servidor");
+  }
+};  
