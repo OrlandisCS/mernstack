@@ -15,8 +15,8 @@ auth,
     check('proyecto', 'El proyecto de la tarea es requerido').not().isEmpty(),
 ],
 tareaController.crearTarea);
-//Obtener tareas por proyecto
 
+//Obtener tareas por proyecto
 router.get('/',
 auth,
 tareaController.obtenerTareas

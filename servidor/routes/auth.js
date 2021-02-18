@@ -12,12 +12,6 @@ const auth = require('../middleware/auth');
 
 router.post(
   "/",
-  [
-    check("Email", "Agrega un email válido").not().isEmail(),
-    check("password", "El Password debe ser minimo de  caracteres").isLength({
-      min: 6,
-    }),
-  ],
   authController.autenticarUsuario
 );
 //obtiene el usuario autenticado
